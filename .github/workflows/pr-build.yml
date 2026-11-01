@@ -15,6 +15,15 @@ jobs:
           cat .github/geest-v03/part* > /tmp/geest.zip.b64
           base64 -d /tmp/geest.zip.b64 > /tmp/geest.zip
           unzip -o /tmp/geest.zip -d "$GITHUB_WORKSPACE"
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('app/src/main/java/com/example/youtube3bullets/YouTubeTranscriptService.kt')
+          s = p.read_text()
+          old = 'Regex("""https?://[^\\\\s]+""")'
+          new = 'Regex("""https?://[^\\s]+""")'
+          assert old in s
+          p.write_text(s.replace(old, new))
+          PY
       - uses: actions/setup-java@v5
         with:
           distribution: temurin
