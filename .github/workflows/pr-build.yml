@@ -15,24 +15,7 @@ jobs:
           grep '^UEsDB' .github/workflows/build-geest-apk.yml > /tmp/geest.zip.b64
           base64 -d /tmp/geest.zip.b64 > /tmp/geest.zip
           unzip -o /tmp/geest.zip -d "$GITHUB_WORKSPACE"
-          python3 - <<'PY'
-          from pathlib import Path
-          p = Path('app/build.gradle.kts')
-          s = p.read_text()
-          needle = '    buildFeatures {\n        compose = true\n    }\n'
-          repl = '''    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
-    }
-
-    buildFeatures {
-        compose = true
-    }
-'''
-          if needle not in s:
-              raise SystemExit('buildFeatures block not found')
-          p.write_text(s.replace(needle, repl))
-          PY
+          python3 -c "from pathlib import Path; p=Path('app/build.gradle.kts'); s=p.read_text(); needle='    buildFeatures {\\n        compose = true\\n    }\\n'; repl='    compileOptions {\\n        sourceCompatibility = JavaVersion.VERSION_17\\n        targetCompatibility = JavaVersion.VERSION_17\\n    }\\n\\n    buildFeatures {\\n        compose = true\\n    }\\n'; assert needle in s; p.write_text(s.replace(needle, repl))"
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
