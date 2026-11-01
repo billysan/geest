@@ -12,7 +12,7 @@ jobs:
       - name: Materialize Geest source from embedded payload
         shell: bash
         run: |
-          awk '/^GEEST_PAYLOAD$/{if (++n==2) exit; next} n==1' .github/workflows/build-geest-apk.yml > /tmp/geest.zip.b64
+          grep '^UEsDB' .github/workflows/build-geest-apk.yml > /tmp/geest.zip.b64
           base64 -d /tmp/geest.zip.b64 > /tmp/geest.zip
           unzip -o /tmp/geest.zip -d "$GITHUB_WORKSPACE"
       - uses: actions/setup-java@v4
