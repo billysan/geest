@@ -16,6 +16,7 @@ jobs:
           base64 -d /tmp/geest.zip.b64 > /tmp/geest.zip
           unzip -o /tmp/geest.zip -d "$GITHUB_WORKSPACE"
           python3 -c "from pathlib import Path; p=Path('app/build.gradle.kts'); s=p.read_text(); needle='    buildFeatures {\\n        compose = true\\n    }\\n'; repl='    compileOptions {\\n        sourceCompatibility = JavaVersion.VERSION_17\\n        targetCompatibility = JavaVersion.VERSION_17\\n    }\\n\\n    buildFeatures {\\n        compose = true\\n    }\\n'; assert needle in s; p.write_text(s.replace(needle, repl))"
+          python3 -c "from pathlib import Path; files=[Path('app/src/main/java/com/example/youtube3bullets/OpenAiSummarizer.kt'), Path('app/src/main/java/com/example/youtube3bullets/YouTubeTranscriptService.kt')]; [p.write_text(p.read_text().replace('response.body.string()', 'response.body?.string() ?: error(\"Empty HTTP response body\")')) for p in files]"
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
