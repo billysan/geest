@@ -9,33 +9,49 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Materialize Geest v0.3 source
+
+      - name: Materialize Geest v0.4 source
         shell: bash
         run: |
           cat .github/geest-v03/part* > /tmp/geest.zip.b64
           base64 -d /tmp/geest.zip.b64 > /tmp/geest.zip
           unzip -o /tmp/geest.zip -d "$GITHUB_WORKSPACE"
+
           python3 - <<'PY'
           from pathlib import Path
           p = Path('app/src/main/java/com/example/youtube3bullets/YouTubeTranscriptService.kt')
           s = p.read_text()
           old = 'Regex("""https?://[^\\\\s]+""")'
           new = 'Regex("""https?://[^\\s]+""")'
-          assert old in s
-          p.write_text(s.replace(old, new))
+          if old in s:
+              p.write_text(s.replace(old, new))
           PY
+
+          base64 -d .github/geest-v04/overrides.b64 > /tmp/geest-v04-overrides.zip
+          unzip -o /tmp/geest-v04-overrides.zip -d "$GITHUB_WORKSPACE"
+
+          mkdir -p app/src/main/res/font
+          curl -fL --retry 3 -o /tmp/0xproto.zip https://github.com/ryanoasis/nerd-fonts/releases/latest/download/0xProto.zip
+          FONT_PATH="$(unzip -Z1 /tmp/0xproto.zip | grep -E '(^|/)0xProtoNerdFont-Regular\.ttf$' | head -1)"
+          test -n "$FONT_PATH"
+          unzip -p /tmp/0xproto.zip "$FONT_PATH" > app/src/main/res/font/oxproto_nerd_font.ttf
+          test -s app/src/main/res/font/oxproto_nerd_font.ttf
+
       - uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: '17'
+
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.9'
+
       - name: Build arm64 debug APK
         run: gradle :app:assembleDebug --stacktrace
+
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: geest-arm64-debug-apk
+          name: geest-v04-arm64-debug-apk
           path: app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
