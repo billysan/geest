@@ -21,7 +21,9 @@ jobs:
           unzip -o /tmp/geest-v04-overrides.zip -d "$GITHUB_WORKSPACE"
           cp .github/geest-v04/YouTubeTranscriptService.kt app/src/main/java/com/example/youtube3bullets/YouTubeTranscriptService.kt
 
-          base64 -d .github/geest-v05/overlay.b64 > /tmp/geest-v05-overlay.zip
+          cat .github/geest-v05/parts/part* > /tmp/geest-v05-overlay.b64
+          base64 -d /tmp/geest-v05-overlay.b64 > /tmp/geest-v05-overlay.zip
+          unzip -t /tmp/geest-v05-overlay.zip
           unzip -o /tmp/geest-v05-overlay.zip -d "$GITHUB_WORKSPACE"
           cp .github/geest-v05/YouTubeTranscriptService.kt app/src/main/java/com/example/youtube3bullets/YouTubeTranscriptService.kt
 
