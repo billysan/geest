@@ -23,6 +23,7 @@ jobs:
 
           base64 -d .github/geest-v05/overlay.b64 > /tmp/geest-v05-overlay.zip
           unzip -o /tmp/geest-v05-overlay.zip -d "$GITHUB_WORKSPACE"
+          cp .github/geest-v05/YouTubeTranscriptService.kt app/src/main/java/com/example/youtube3bullets/YouTubeTranscriptService.kt
 
           mkdir -p app/src/main/res/font
           curl -fL --retry 3 -o /tmp/0xproto.zip https://github.com/ryanoasis/nerd-fonts/releases/latest/download/0xProto.zip
