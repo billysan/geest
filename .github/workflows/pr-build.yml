@@ -10,7 +10,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Materialize Geest v0.4 source
+      - name: Materialize Geest v0.5 source
         shell: bash
         run: |
           cat .github/geest-v03/part* > /tmp/geest.zip.b64
@@ -20,6 +20,9 @@ jobs:
           base64 -d .github/geest-v04/overrides.b64 > /tmp/geest-v04-overrides.zip
           unzip -o /tmp/geest-v04-overrides.zip -d "$GITHUB_WORKSPACE"
           cp .github/geest-v04/YouTubeTranscriptService.kt app/src/main/java/com/example/youtube3bullets/YouTubeTranscriptService.kt
+
+          base64 -d .github/geest-v05/overlay.b64 > /tmp/geest-v05-overlay.zip
+          unzip -o /tmp/geest-v05-overlay.zip -d "$GITHUB_WORKSPACE"
 
           mkdir -p app/src/main/res/font
           curl -fL --retry 3 -o /tmp/0xproto.zip https://github.com/ryanoasis/nerd-fonts/releases/latest/download/0xProto.zip
@@ -43,6 +46,6 @@ jobs:
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: geest-v04-arm64-debug-apk
+          name: geest-v05-arm64-debug-apk
           path: app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
